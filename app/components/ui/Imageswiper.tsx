@@ -1,13 +1,10 @@
-"use client"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
-const images = [
-  "/assets/slider.jpg",
-  "/assets/slider1.jpg",
-  
-];
+const images = ["/assets/slider.jpg", "/assets/slider1.jpg"];
 
 const ImageSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -15,12 +12,12 @@ const ImageSlider = () => {
   const [touchEnd, setTouchEnd] = useState(0);
 
   // Handle swipe gesture
-  const handleTouchStart = (e) => {
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     const touchStartPosition = e.touches[0].clientX;
     setTouchStart(touchStartPosition);
   };
 
-  const handleTouchMove = (e) => {
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     const touchMovePosition = e.touches[0].clientX;
     setTouchEnd(touchMovePosition);
   };
@@ -71,9 +68,9 @@ const ImageSlider = () => {
             <Image
               src={img}
               alt={`Slide ${index + 1}`}
-              layout="intrinsic"  // To maintain aspect ratio
-              width={1200}        // Set a fixed width
-              height={500}        // Set a fixed height
+              layout="intrinsic" // To maintain aspect ratio
+              width={1200} // Set a fixed width
+              height={500} // Set a fixed height
               objectFit="cover"
               className="rounded-lg"
             />
