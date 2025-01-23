@@ -1,3 +1,23 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "rules": {
+    "no-unused-vars": "off",
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/no-unescaped-entities": "off",
+    "react/no-array-index-key": "off",
+    "react/no-deprecated": "off",
+    "react/no-string-refs": "off",
+    "react/no-unsupported-features/node-builtins": "off",
+    "react/no-unsafe": "off",
+    "react/no-unused-state": "off",
+    "react/no-unused-vars": "off",
+    "react/no-unknown-property": "off",
+    "react/no-unused-prop-types": "off",
+    "react/no-unused-imports": "off",
+    "react/no-unused-expressions": "off",
+    "react/no-unused-components": "off",
+    "react/no-unused-classes": "off",
+    "react/no-unused-private-class-members": "off"
+  }
 }

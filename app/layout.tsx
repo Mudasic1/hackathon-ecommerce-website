@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { Toaster } from 'sonner';
+import { CartProvider } from './context/page'
 
 
 
@@ -21,9 +23,12 @@ export default function RootLayout({
       <body
         className={`overflow-x-hidden`}
       >
-        <Navbar />
-        {children}
-        <Footer/>
+        <CartProvider>
+          <Navbar />
+          {children}
+          <Footer/>
+          <Toaster />
+        </CartProvider>
       </body>
     </html>
   );
