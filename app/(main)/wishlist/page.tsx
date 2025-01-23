@@ -5,13 +5,13 @@ import { toast } from "sonner";
 import Link from "next/link";
 
 export default function WishlistPage() {
-  const { wishlistItems, removeFromWishlist, addToCart } = useCart();
+  const { wishlist: wishlistItems, removeFromWishlist, addToCart } = useCart();
 
-  const handleAddToCart = (item: any) => {
+  const handleAddToCart = (item: typeof wishlistItems[0]) => {
     addToCart(item);
     toast.success(`${item.title} added to cart!`, {
       duration: 2000,
-      position: 'top-center',
+      position: "top-center",
     });
   };
 
@@ -19,7 +19,7 @@ export default function WishlistPage() {
     <div className="py-10 px-5 lg:px-20">
       <h1 className="text-2xl font-bold mb-8">My Wishlist</h1>
 
-      {wishlistItems.length === 0 ? (
+      {!wishlistItems || wishlistItems.length === 0 ? (
         <div className="text-center py-10">
           <p className="text-gray-500">Your wishlist is empty</p>
           <Link href="/shop" className="text-yellow-600 hover:underline mt-4 inline-block">
@@ -40,7 +40,7 @@ export default function WishlistPage() {
                 <p className="text-gray-600 text-sm">{item.desc}</p>
                 <p className="text-red-500 font-bold mt-2">{item.Price}</p>
               </Link>
-              
+
               <div className="flex gap-2 mt-4">
                 <button
                   onClick={() => handleAddToCart(item)}
@@ -64,4 +64,4 @@ export default function WishlistPage() {
       )}
     </div>
   );
-} 
+}

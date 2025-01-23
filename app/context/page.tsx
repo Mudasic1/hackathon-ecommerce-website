@@ -1,97 +1,75 @@
-// context/CartContext.js
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, ReactNode } from 'react';
+import { Product } from '../components/Products';
 
-interface Product {
-  id: number;
-  title: string;
-  desc: string;
-  Price: string;
-  img: string;
-  quantity?: number;
-}
+type ProductType = typeof Product[0];
 
 interface CartContextType {
-  cartItems: Product[];
-  wishlistItems: Product[];
-  addToCart: (product: Product) => void;
-  removeFromCart: (id: number) => void;
-  addToWishlist: (product: Product) => void;
-  removeFromWishlist: (id: number) => void;
-  isInWishlist: (id: number) => boolean;
+  cart: (ProductType & { quantity: number })[];
+  addToCart: (item: ProductType) => void;
+  removeFromCart: (productId: number) => void;
+  cartCount: number;
+  wishlist: ProductType[];
+  addToWishlist: (item: ProductType) => void;
+  removeFromWishlist: (productId: number) => void;
+  isInWishlist: (productId: number) => boolean;
 }
 
-// Create the CartContext with initial value
-const CartContext = createContext<CartContextType>({
-  cartItems: [],
-  wishlistItems: [],
-  addToCart: () => {},
-  removeFromCart: () => {},
-  addToWishlist: () => {},
-  removeFromWishlist: () => {},
-  isInWishlist: () => false,
-});
+const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// Provide the CartContext to the entire app
-export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-  const [cartItems, setCartItems] = useState<Product[]>([]);
-  const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
+export function CartProvider({ children }: { children: ReactNode }) {
+  const [cart, setCart] = useState<(ProductType & { quantity: number })[]>([]);
+  const [wishlist, setWishlist] = useState<ProductType[]>([]);
 
-  const addToCart = (product: Product) => {
-    // Check if the product is already in the cart
-    const existingProduct = cartItems.find((item) => item.id === product.id);
-
-    if (existingProduct) {
-      // Update quantity if the product is already in the cart
-      setCartItems((prevItems) =>
-        prevItems.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: (item.quantity || 1) + 1 }
-            : item
-        )
-      );
-    } else {
-      // Add a new product to the cart
-      setCartItems([...cartItems, { ...product, quantity: 1 }]);
-    }
+  const addToCart = (item: ProductType) => {
+    setCart(prev => {
+      const existingItem = prev.find(i => i.id === item.id);
+      if (existingItem) {
+        return prev.map(i => 
+          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+        );
+      }
+      return [...prev, { ...item, quantity: 1 }];
+    });
   };
 
-  const removeFromCart = (id: number) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  const removeFromCart = (productId: number) => {
+    setCart(prev => prev.filter(item => item.id !== productId));
   };
 
-  const addToWishlist = (product: Product) => {
-    const exists = wishlistItems.find(item => item.id === product.id);
-    if (!exists) {
-      setWishlistItems([...wishlistItems, product]);
-    }
+  const addToWishlist = (item: ProductType) => {
+    setWishlist(prev => [...prev, item]);
   };
 
-  const removeFromWishlist = (id: number) => {
-    setWishlistItems(prevItems => prevItems.filter(item => item.id !== id));
+  const removeFromWishlist = (productId: number) => {
+    setWishlist(prev => prev.filter(item => item.id !== productId));
   };
 
-  const isInWishlist = (id: number) => {
-    return wishlistItems.some(item => item.id === id);
+  const isInWishlist = (productId: number) => {
+    return wishlist.some(item => item.id === productId);
   };
 
   return (
-    <CartContext.Provider 
-      value={{ 
-        cartItems, 
-        wishlistItems,
-        addToCart, 
-        removeFromCart,
-        addToWishlist,
-        removeFromWishlist,
-        isInWishlist
-      }}
-    >
+    <CartContext.Provider value={{
+      cart,
+      addToCart,
+      removeFromCart,
+      cartCount: cart.length,
+      wishlist,
+      addToWishlist,
+      removeFromWishlist,
+      isInWishlist,
+    }}>
       {children}
     </CartContext.Provider>
   );
-};
+}
 
-// Custom hook to use the CartContext
-export const useCart = () => useContext(CartContext);
+export function useCart() {
+  const context = useContext(CartContext);
+  if (context === undefined) {
+    throw new Error('useCart must be used within a CartProvider');
+  }
+  return context;
+}

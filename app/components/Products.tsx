@@ -4,6 +4,7 @@ import { useCart } from "@/app/context/page";
 import { FaHeart } from "react-icons/fa";
 import { CiShare2, CiSliderVertical } from "react-icons/ci";
 import { toast } from "sonner";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -12,7 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "./shadcn/cards";
-import Link from "next/link";
 
 export const Product = [
   { id: 1, title: "Syltherine", desc: "Stylish cafe chair", Price: "Rp 2.500.000", img: "/assets/product1.png" },

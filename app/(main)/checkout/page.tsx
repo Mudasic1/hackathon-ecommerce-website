@@ -1,208 +1,158 @@
 "use client";
 
+import { useCart } from "@/app/context/page";
 import { useState } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-const Checkout = () => {
-  const [billingDetails, setBillingDetails] = useState({
+export default function CheckoutPage() {
+  const router = useRouter();
+  const { cart: cartItems, removeFromCart } = useCart();
+  const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    company: "",
-    country: "",
+    email: "",
     address: "",
     city: "",
-    state: "",
-    zip: "",
+    postalCode: "",
     phone: "",
-    email: "",
-    additionalInfo: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setBillingDetails({ ...billingDetails, [name]: value });
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Order Placed", billingDetails);
-  };
-
-  const products = [
-    {
-      id: 1,
-      name: "Asgaard Sofa",
-      price: 250000,
-      quantity: 1,
-    },
-  ];
-
-  const subtotal = products.reduce(
-    (total, product) => total + product.price * product.quantity,
+  const subtotal = cartItems.reduce(
+    (total, item) => total + parseInt(item.Price.replace(/[^\d]/g, "")) * (item.quantity || 1),
     0
   );
+  const shipping = 50000;
+  const total = subtotal + shipping;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Show success toast
+    toast.success("Your order is being processed!", {
+      duration: 3000,
+      position: "top-center",
+    });
+
+    // Clear cart items
+    cartItems.forEach(item => removeFromCart(item.id));
+
+    // Redirect to shop page
+    router.push('/shop');
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 lg:px-8 py-10">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-8">Checkout</h1>
+    <div className="py-10 px-5 lg:px-20">
+      <h1 className="text-2xl font-bold mb-8">Checkout</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {/* Billing Details */}
-          <div className="bg-white p-6 shadow rounded-lg">
-            <h2 className="text-lg font-medium text-gray-700 mb-4">Billing Details</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid lg:grid-cols-2 gap-10">
+        {/* Checkout Form */}
+        <div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">First Name</label>
                 <input
                   type="text"
-                  name="firstName"
-                  placeholder="First Name"
-                  value={billingDetails.firstName}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <input
-                  type="text"
-                  name="lastName"
-                  placeholder="Last Name"
-                  value={billingDetails.lastName}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
                 />
               </div>
-
-              <input
-                type="text"
-                name="company"
-                placeholder="Company Name (Optional)"
-                value={billingDetails.company}
-                onChange={handleChange}
-                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-
-              <input
-                type="text"
-                name="country"
-                placeholder="Country / Region"
-                value={billingDetails.country}
-                onChange={handleChange}
-                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-
-              <input
-                type="text"
-                name="address"
-                placeholder="Street Address"
-                value={billingDetails.address}
-                onChange={handleChange}
-                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Last Name</label>
                 <input
                   type="text"
-                  name="city"
-                  placeholder="Town / City"
-                  value={billingDetails.city}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <input
-                  type="text"
-                  name="state"
-                  placeholder="State"
-                  value={billingDetails.state}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
                 />
               </div>
+            </div>
 
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Email</label>
               <input
-                type="text"
-                name="zip"
-                placeholder="ZIP Code"
-                value={billingDetails.zip}
-                onChange={handleChange}
-                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                type="email"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
               />
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
-                  type="tel"
-                  name="phone"
-                  placeholder="Phone"
-                  value={billingDetails.phone}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email Address"
-                  value={billingDetails.email}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Address</label>
               <textarea
-                name="additionalInfo"
-                placeholder="Additional Information"
-                value={billingDetails.additionalInfo}
-                onChange={handleChange}
-                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              ></textarea>
-
-              <button
-                type="submit"
-                className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-              >
-                Place Order
-              </button>
-            </form>
-          </div>
-
-          {/* Order Summary */}
-          <div className="bg-white p-6 shadow rounded-lg">
-            <h2 className="text-lg font-medium text-gray-700 mb-4">Order Summary</h2>
-            <ul className="divide-y divide-gray-200 mb-4">
-              {products.map((product) => (
-                <li
-                  key={product.id}
-                  className="flex justify-between items-center py-2"
-                >
-                  <span>{product.name}</span>
-                  <span>Rs. {product.price.toLocaleString()}</span>
-                </li>
-              ))}
-            </ul>
-
-            <div className="flex justify-between text-lg font-semibold">
-              <span>Total</span>
-              <span className="text-green-600">Rs. {subtotal.toLocaleString()}</span>
+                required
+                rows={3}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+              />
             </div>
 
-            <div className="mt-6">
-              <label className="block text-sm text-gray-700 mb-2">Payment Method</label>
-              <select className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option>Direct Bank Transfer</option>
-                <option>Cash on Delivery</option>
-              </select>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">City</label>
+                <input
+                  type="text"
+                  required
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Postal Code</label>
+                <input
+                  type="text"
+                  required
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                />
+              </div>
             </div>
-          </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Phone</label>
+              <input
+                type="tel"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+              />
+            </div>
+          </form>
         </div>
 
-        {/* Footer Section */}
-        <div className="mt-10 text-sm text-gray-600 flex justify-between">
-          <div className="flex gap-6">
-            <span>High Quality Materials</span>
-            <span>Warranty Protection</span>
-            <span>Free Shipping</span>
-            <span>24/7 Support</span>
+        {/* Order Summary */}
+        <div className="bg-gray-50 p-6 rounded-lg">
+          <h2 className="text-xl font-semibold mb-6">Order Summary</h2>
+          <div className="space-y-4">
+            {cartItems.map((item) => (
+              <div key={item.id} className="flex justify-between">
+                <div>
+                  <p className="font-medium">{item.title}</p>
+                  <p className="text-sm text-gray-500">Quantity: {item.quantity || 1}</p>
+                </div>
+                <p className="font-medium">{item.Price}</p>
+              </div>
+            ))}
+            <hr className="my-4" />
+            <div className="flex justify-between">
+              <p>Subtotal</p>
+              <p>Rp {subtotal.toLocaleString()}</p>
+            </div>
+            <div className="flex justify-between">
+              <p>Shipping</p>
+              <p>Rp {shipping.toLocaleString()}</p>
+            </div>
+            <div className="flex justify-between font-bold">
+              <p>Total</p>
+              <p>Rp {total.toLocaleString()}</p>
+            </div>
+
+            <button
+              type="submit"
+              onClick={handleSubmit}
+              className="w-full bg-yellow-600 text-white py-3 rounded-lg hover:bg-yellow-700 transition-colors mt-6"
+            >
+              Place Order
+            </button>
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default Checkout;
+}

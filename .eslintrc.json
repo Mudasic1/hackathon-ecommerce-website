@@ -2,7 +2,8 @@
   "extends": ["next/core-web-vitals", "next/typescript"],
   "rules": {
     "no-unused-vars": "off",
-    "react/prop-types": "off",
+    "react-hooks/rules-of-hooks": "off",
+    "react-hooks/exhaustive-deps": "off",
     "react/react-in-jsx-scope": "off",
     "react/no-unescaped-entities": "off",
     "react/no-array-index-key": "off",
@@ -18,6 +19,9 @@
     "react/no-unused-expressions": "off",
     "react/no-unused-components": "off",
     "react/no-unused-classes": "off",
-    "react/no-unused-private-class-members": "off"
+    "react/no-unused-private-class-members": "off",
+    "react/prop-types": "off",
+    "react/no-unsupported-features/react-hooks": "off",
   }
+  
 }

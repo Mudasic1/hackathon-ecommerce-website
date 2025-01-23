@@ -3,8 +3,8 @@
 
 import { useCart } from "@/app/context/page";
 
-const CartPage = () => {
-  const { cartItems, removeFromCart } = useCart();
+const Cart = () => {
+  const { cart: cartItems, removeFromCart } = useCart();
 
   return (
     <div className="py-10 px-5">
@@ -37,7 +37,7 @@ const CartPage = () => {
                   Remove
                 </button>
                 <button 
-                  onClick={() => alert('Checkout functionality coming soon!')}
+                  onClick={() => window.location.href = '/checkout'}
                   className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition-colors"
                 >
                   Checkout
@@ -47,7 +47,7 @@ const CartPage = () => {
           ))}
           <div className="mt-6 text-right">
             <button 
-              onClick={() => alert('Checkout all items functionality coming soon!')}
+              onClick={() => window.location.href = '/checkout'}
               className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors text-lg"
             >
               Checkout All
@@ -59,4 +59,4 @@ const CartPage = () => {
   );
 };
 
-export default CartPage;
+export default Cart;
